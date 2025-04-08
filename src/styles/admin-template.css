@@ -1,0 +1,232 @@
+/* General Layout */
+body {
+    font-family: 'Nunito', sans-serif; /* Example font, adjust as needed */
+    background-color: #f8f9fc; /* Light gray background */
+    color: #5a5c69; /* Dark gray text */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.main-container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 225px; /* Fixed sidebar width */
+    background-color: #4e73df; /* Dark blue sidebar */
+    color: white;
+    min-height: 100vh; /* Full height */
+    position: fixed;
+    top: 60px; /* Start below the navbar */
+    left: 0;
+    z-index: 100;
+    transition: left 0.3s ease-in-out; /* Add transition for smooth animation */
+    display: flex;
+    flex-direction: column;
+}
+
+.content-container {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f8f9fc; /* White content background */
+    margin-left: 225px; /* Match sidebar width */
+    margin-top: 60px; /* Match navbar height */
+    transition: margin-left 0.3s ease-in-out; /* Add transition for smooth animation */
+}
+
+/* Sidebar */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-nav > ul {
+    flex-grow: 1; /* Make the main menu take up available space */
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar nav li {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer; /* Add cursor pointer */
+}
+
+.sidebar nav a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    width: 100%; /* Make the link take up the full width */
+}
+
+.sidebar nav li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar nav li.active {
+    background-color: rgba(255, 255, 255, 0.15); /* Highlight active item */
+    border-left: 4px solid white; /* Add a left border */
+}
+
+/* Navbar */
+.navbar {
+    background-color: white !important;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 101;
+    height: 60px; /* Add a fixed height */
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Vertically center items */
+    padding: 0 1rem; /* Add some padding */
+}
+
+.navbar-nav {
+    margin-left: auto; /* Push user info to the right */
+}
+
+.navbar-nav .nav-link {
+    color: #5a5c69;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav .dropdown-toggle::after {
+    display: none; /* Hide the default dropdown arrow */
+}
+
+.navbar-nav .dropdown-menu {
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.navbar-nav .dropdown-item {
+    color: #5a5c69;
+}
+
+.navbar-nav .dropdown-item:hover {
+    background-color: #f8f9fc;
+}
+
+.img-profile {
+    height: 2rem;
+    width: 2rem;
+}
+
+.logo-img {
+    height: 30px; /* Adjust logo height as needed */
+    width: auto;
+    margin-right: 1rem;
+}
+
+/* Login Page */
+.login-container {
+    background-color: #e7e7e7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-box {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.user-icon {
+    margin-right: 0.5rem; /* Add space between icon and text */
+}
+
+.user-info {
+    gap: 0.5rem;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        left: -225px; /* Hide sidebar off-screen */
+    }
+
+    .content-container {
+        margin-left: 0; /* Content takes full width */
+    }
+
+    .sidebar.show {
+        left: 0; /* Show sidebar */
+    }
+}
+
+.logout-container {
+    margin-top: auto; /* Push to the bottom */
+    list-style: none;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.logout-item {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: red;
+}
+
+.logout-item a {
+    color: red;
+}
+
+.card {
+    border: none;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 0.75rem 1.25rem;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-bordered {
+    border: 1px solid #e3e6f0;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #e3e6f0;
+}
+
+.text-primary {
+    color: #4e73df !important;
+}
+
+.text-warning {
+    color: #f6c23e !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Container */
+.container-fluid {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    margin-right: auto;
+    margin-left: auto;
+}
