@@ -1,5 +1,6 @@
 import { axiosInstance } from '../utils/axiosInterceptor';
 import { Usuario } from '../types/Usuario';
+import { ROLES } from '../constants/roles';
 
 const getUsuarios = async (page: number, size: number, nombre: string): Promise<any> => {
     try {
@@ -13,6 +14,44 @@ const getUsuarios = async (page: number, size: number, nombre: string): Promise<
         return response.data;
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
+        throw error;
+    }
+};
+
+const getUsuarioById = async (id: string): Promise<Usuario> => {
+    try {
+        const response = await axiosInstance.get<Usuario>(`/usuarios/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error al obtener el usuario con ID ${id}:`, error);
+        throw error;
+    }
+};
+
+const getProveedores = async (): Promise<Usuario[]> => {
+    try {
+    
+        const response = await axiosInstance.get<Usuario[]>('/usuarios/proveedores');
+        return response.data;
+    } catch (error) {
+        console.error(`Error al obtener usuarios con rol ${ROLES.PROVEEDOR}:`, error);
+        throw error;
+    }
+};
+
+const getClientes = async (numeroDocumento?: number, nombre?: string): Promise<Usuario[]> => {
+    try {
+        const params: any = {};
+        if (numeroDocumento !== undefined) {
+            params.numeroDocumento = numeroDocumento;
+        }
+        if (nombre) {
+            params.nombre = nombre;
+        }
+        const response = await axiosInstance.get<Usuario[]>('/usuarios/clientes', { params });
+        return response.data;
+    } catch (error) {
+        console.error(`Error al obtener usuarios con rol ${ROLES.CLIENTE}:`, error);
         throw error;
     }
 };
@@ -57,6 +96,9 @@ const updateUsuarioPassword = async (id: string, password: string): Promise<void
 
 const usuarioService = {
     getUsuarios,
+    getUsuarioById,
+    getProveedores,
+    getClientes,
     createUsuario,
     updateUsuario,
     deleteUsuario,

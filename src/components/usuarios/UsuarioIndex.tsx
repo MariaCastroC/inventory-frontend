@@ -6,7 +6,7 @@ import CambiarPasswordModal from './CambiarPasswordModal';
 import Swal from 'sweetalert2';
 import usuarioService from '../../services/usuarioService';
 
-const Usuarios: React.FC = () => {
+const UsuarioIndex: React.FC = () => {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedUsuario, setSelectedUsuario] = useState<Usuario>();
@@ -17,19 +17,18 @@ const Usuarios: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const pageSize = 2;
-
     const fetchUsuarios = async () => {
         setIsLoading(true);
         try {
+            const pageSize = 2;
             const data = await usuarioService.getUsuarios(currentPage, pageSize, searchQuery);
             setUsuarios(data.content);
             setTotalPages(data.totalPages);
-        } catch (error) {
+        } catch (e) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Error al obtener los usuarios.',
+                text: 'Error al obtener los usuarios. '+ e,
             });
         } finally {
             setIsLoading(false);
@@ -84,11 +83,11 @@ const Usuarios: React.FC = () => {
                         text: 'El usuario ha sido eliminado.',
                     });
                     fetchUsuarios();
-                } catch (error) {
+                } catch (e) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al eliminar el usuario.',
+                        text: 'Error al eliminar el usuario. ' + e,
                     });
                 } finally {
                     setIsLoading(false);
@@ -130,6 +129,8 @@ const Usuarios: React.FC = () => {
                                         <th>Email</th>
                                         <th>Dirección</th>
                                         <th>Teléfono</th>
+                                        <th>Tipo Documento</th>
+                                        <th>Nro. Documento</th>
                                         <th>Rol</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -141,6 +142,8 @@ const Usuarios: React.FC = () => {
                                             <td>{usuario.email}</td>
                                             <td>{usuario.direccion}</td>
                                             <td>{usuario.telefono}</td>
+                                            <td>{usuario.tipoDocumento || 'N/A'}</td>
+                                            <td>{usuario.numeroDocumento || 'N/A'}</td>
                                             <td>{usuario.rol.nombre}</td>
                                             <td>
                                                 <button className="btn btn-sm btn-primary me-1" onClick={() => handleShowModal(usuario)}>Editar</button>
@@ -180,4 +183,4 @@ const Usuarios: React.FC = () => {
     );
 };
 
-export default Usuarios;
+export default UsuarioIndex;

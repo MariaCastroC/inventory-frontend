@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { Rol } from '../../types/Rol';
 import { Usuario } from '../../types/Usuario';
+import { TipoDocumento } from '../../types/Usuario'; // Importar el Enum
 import Swal from 'sweetalert2';
 import rolService from '../../services/rolService';
 import usuarioService from '../../services/usuarioService';
@@ -23,7 +24,9 @@ const UsuarioModal: React.FC<UsuarioModalProps> = ({ show, onHide, usuario: usua
         direccion: '',
         telefono: '',
         password: '',
-        rol: { idRol: '', nombre: '', descripcion: '' }
+        rol: { idRol: '', nombre: '', descripcion: '' },
+        tipoDocumento: undefined, // Valor inicial para tipoDocumento
+        numeroDocumento: ''     // Valor inicial para numeroDocumento
     });
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -46,25 +49,30 @@ const UsuarioModal: React.FC<UsuarioModalProps> = ({ show, onHide, usuario: usua
     }, []);
 
     useEffect(() => {
-        if (usuarioProp) {
-            setUsuario({ ...usuarioProp });
-            setSelectedRolId(usuarioProp.rol.idRol.toString());
-            setIsNewUser(false);
-        } else {
-            setUsuario({
-                idUsuario: '',
-                nombre: '',
-                email: '',
-                direccion: '',
-                telefono: '',
-                password: '',
-                rol: { idRol: '', nombre: '', descripcion: '' }
-            });
-            setSelectedRolId('');
-            setIsNewUser(true);
+        if (show) { // Solo ejecutar cuando el modal es visible
+            if (usuarioProp) {
+                setUsuario({ ...usuarioProp });
+                setSelectedRolId(usuarioProp.rol.idRol.toString());
+                setIsNewUser(false);
+            } else {
+                // Resetear el formulario para un nuevo usuario
+                setUsuario({
+                    idUsuario: '',
+                    nombre: '',
+                    email: '',
+                    direccion: '',
+                    telefono: '',
+                    password: '',
+                    rol: { idRol: '', nombre: '', descripcion: '' },
+                    tipoDocumento: undefined,
+                    numeroDocumento: ''
+                });
+                setSelectedRolId('');
+                setIsNewUser(true);
+            }
+            setErrorMessage(null); // Limpiar mensajes de error al abrir/refrescar
         }
-        setErrorMessage(null);
-    }, [usuarioProp]);
+    }, [show, usuarioProp]); // Añadir show a las dependencias
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -136,12 +144,38 @@ const UsuarioModal: React.FC<UsuarioModalProps> = ({ show, onHide, usuario: usua
             <Modal.Body>
                 {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
                 <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="formTipoDocumento">
+                        <Form.Label>Tipo de Documento</Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="tipoDocumento"
+                            value={usuario.tipoDocumento || ''}
+                            onChange={handleInputChange}
+                        >
+                            <option value="">Seleccionar Tipo</option>
+                            {Object.values(TipoDocumento).map(tipo => (
+                                <option key={tipo} value={tipo}>{tipo}</option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId="formNumeroDocumento">
+                        <Form.Label>Número de Documento</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="numeroDocumento"
+                            placeholder="Ingrese el número de documento"
+                            value={usuario.numeroDocumento}
+                            onChange={handleInputChange}
+                        />
+                    </Form.Group>
+                    
                     <Form.Group controlId="formNombre">
                         <Form.Label>Nombre</Form.Label>
                         <Form.Control
                             type="text"
                             name="nombre"
-                            placeholder="Ingrese el nombre"
+                            placeholder="Ingrese el nombre completo"
                             value={usuario.nombre}
                             onChange={handleInputChange}
                             required

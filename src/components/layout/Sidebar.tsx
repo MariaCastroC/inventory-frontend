@@ -48,15 +48,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                 return [
                     { path: '/home', label: 'Inicio', icon: 'fas fa-fw fa-tachometer-alt' },
                     { path: '/usuarios', label: 'Usuarios', icon: 'fas fa-fw fa-users' },
+                    { path: '/categorias', label: 'Categorias', icon: 'fas fa-fw fa-tags' },
                     { path: '/productos', label: 'Productos', icon: 'fas fa-fw fa-box' },
-                    { path: '/ventas', label: 'Ventas', icon: 'fas fa-fw fa-shopping-cart' },
+                    { path: '/ventas', label: 'Ventas', icon: 'fas fa-fw fa-dollar-sign' },
                     { path: '/compras', label: 'Compras', icon: 'fas fa-fw fa-truck' },
                 ];
             case ROLES.VENTAS:
                 return [
                     { path: '/home', label: 'Inicio', icon: 'fas fa-fw fa-tachometer-alt' },
-                    { path: '/ventas', label: 'Ventas', icon: 'fas fa-fw fa-shopping-cart' },
-                    { path: '/productos', label: 'Productos', icon: 'fas fa-fw fa-box' },
+                    { path: '/ventas', label: 'Ventas', icon: 'fas fa-fw fa-dollar-sign' },
+                    { path: '/categorias', label: 'Categorias', icon: 'fas fa-fw fa-tags' },
+                    { path: '/productos', label: 'Productos', icon: 'fas fa-fw fa-box' }
                 ];
             case ROLES.COMPRAS:
                 return [

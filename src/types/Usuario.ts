@@ -1,11 +1,18 @@
 import { Rol } from "./Rol";
 
+export enum TipoDocumento {
+    CEDULA_CIUDADANIA = "CÉDULA DE CIUDADANÍA",
+    PASAPORTE = "PASAPORTE"
+}
+
 export interface Usuario {
-    idUsuario?: string; // UUID (Opcional para creación)
+    idUsuario?: string;
     nombre: string;
-    direccion?: string; // Opcional
-    telefono?: string; // Opcional
     email: string;
-    password: string; // Obligatorio, solo para creación o cambio de contraseña
+    direccion?: string;
+    telefono?: string;
+    password?: string;
     rol: Rol;
+    tipoDocumento?: TipoDocumento | string;
+    numeroDocumento?: string;
 }

@@ -6,11 +6,14 @@ import Navbar from './components/layout/Navbar';
 import Sidebar from './components/layout/Sidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/admin-template.css';
-import Usuarios from './components/usuarios/Usuarios';
 import { axiosInstance } from './utils/axiosInterceptor';
 import AuthLayout from './components/auth/AuthLayout';
 import { AuthProvider, useAuth } from './components/auth/AuthContext';
 import Spinner from 'react-bootstrap/Spinner';
+import UsuarioIndex from './components/usuarios/UsuarioIndex';
+import ProductoIndex from './components/productos/ProductoIndex';
+import CategoriaIndex from './components/categorias/CategoriaIndex';
+import VentaIndex from './components/ventas/VentaIndex';
 
 function useAxiosResponseInterceptor() {
     const navigate = useNavigate();
@@ -91,7 +94,10 @@ const AppContent: React.FC = () => {
                     <Routes>
                         <Route path="/logout" element={<Logout />} />
                         <Route path="/home" element={<Home />} />
-                        <Route path="/usuarios" element={<Usuarios />} />
+                        <Route path="/usuarios" element={<UsuarioIndex />} />
+                        <Route path="/productos" element={<ProductoIndex />} /> 
+                        <Route path="/categorias" element={<CategoriaIndex />} />
+                        <Route path="/ventas" element={<VentaIndex />} />
                     </Routes>
                 </div>
             </div>
