@@ -17,7 +17,7 @@ interface ProductoModalProps {
 
 const ProductoModal: React.FC<ProductoModalProps> = ({ show, onHide, producto, onProductoUpdated, categorias, proveedores }) => {
   const [nombre, setNombre] = useState('');
-  const [codigo, setCodigo] = useState(''); // Nuevo estado para código
+  const [codigo, setCodigo] = useState<number | ''>(''); // Cambiado para manejar número o string vacío
   const [descripcion, setDescripcion] = useState('');
   const [precioUnitario, setPrecioUnitario] = useState<number | ''>('');
   const [stock, setStock] = useState<number | ''>('');
@@ -29,7 +29,7 @@ const ProductoModal: React.FC<ProductoModalProps> = ({ show, onHide, producto, o
 
   useEffect(() => {
     if (producto) {
-      setCodigo(producto.codigo || '');
+      setCodigo(producto.codigo !== undefined ? producto.codigo : ''); // producto.codigo es number
       setNombre(producto.nombre);
       setDescripcion(producto.descripcion || '');
       setPrecioUnitario(producto.precioUnitario);
@@ -51,7 +51,7 @@ const ProductoModal: React.FC<ProductoModalProps> = ({ show, onHide, producto, o
 
   const validateForm = () => {
     const newErrors: { codigo?: string; nombre?: string; precioUnitario?: string; stock?: string; categoria?: string; proveedor?: string } = {};
-    if (!codigo.trim()) newErrors.codigo = 'El código es obligatorio.'; // Validación básica para código
+    if (codigo === '' || codigo === null || (typeof codigo === 'number' && codigo <= 0)) newErrors.codigo = 'El código es obligatorio y debe ser un número positivo.';
     if (!nombre.trim()) newErrors.nombre = 'El nombre es obligatorio.';
     if (precioUnitario === '' || precioUnitario === null || precioUnitario <= 0) newErrors.precioUnitario = 'El precio debe ser un número positivo.';
     if (stock === '' || stock === null || stock < 0) newErrors.stock = 'El stock debe ser un número no negativo.';
@@ -71,7 +71,7 @@ const ProductoModal: React.FC<ProductoModalProps> = ({ show, onHide, producto, o
     setIsSubmitting(true);
     const productoData = { // Ajustar la estructura aquí
       idProducto: producto?.idProducto,
-      codigo,
+      codigo: Number(codigo), // Asegurarse de enviar como número si el estado es string
       nombre,
       descripcion,
       precioUnitario: Number(precioUnitario),
@@ -106,7 +106,7 @@ const ProductoModal: React.FC<ProductoModalProps> = ({ show, onHide, producto, o
         <Modal.Body>
           <Form.Group className="mb-3" controlId="formProductoCodigo">
             <Form.Label>Código</Form.Label>
-            <Form.Control type="text" placeholder="Código del producto" value={codigo} onChange={(e) => setCodigo(e.target.value)} isInvalid={!!errors.codigo} />
+            <Form.Control type="number" placeholder="Código del producto" value={codigo} onChange={(e) => setCodigo(e.target.value === '' ? '' : Number(e.target.value))} isInvalid={!!errors.codigo} />
             <Form.Control.Feedback type="invalid">{errors.codigo}</Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formProductoNombre">

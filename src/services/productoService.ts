@@ -63,11 +63,29 @@ const deleteProducto = async (id: string): Promise<void> => {
   }
 };
 
+const searchProductosSimple = async (codigo?: string, nombre?: string): Promise<Producto[]> => {
+  try {
+    const params: any = {};
+    if (codigo) {
+      params.codigo = codigo;
+    }
+    if (nombre) {
+      params.nombre = nombre;
+    }
+    const response = await axiosInstance.get<Producto[]>('/productos/all', { params });
+    return response.data || []; // Devolver array vacío si no hay datos (ej. 204 No Content)
+  } catch (error) {
+    console.error('Error al buscar productos (simple):', error);
+    return []; 
+  }
+};
+
 const productoService = {
   getProductos,
   createProducto,
   updateProducto,
   deleteProducto,
+  searchProductosSimple,
 };
 
 export default productoService;

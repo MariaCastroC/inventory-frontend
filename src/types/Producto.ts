@@ -3,7 +3,7 @@ import { Usuario } from './Usuario';
 
 export interface Producto {
   idProducto?: string;
-  codigo?: number; // Nuevo campo
+  codigo?: number;
   nombre: string;
   descripcion?: string;
   precioUnitario: number;
