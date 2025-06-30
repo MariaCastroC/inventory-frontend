@@ -150,7 +150,8 @@ const ProductoIndex: React.FC = () => {
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Descripción</th>
-                                        <th>Precio</th>
+                                        <th>Precio Venta</th>
+                                        <th>Precio Proveedor</th>
                                         <th>Stock</th>
                                         <th>Categoría</th>
                                         <th>Proveedor</th>
@@ -163,7 +164,8 @@ const ProductoIndex: React.FC = () => {
                                             <td>{producto.codigo || 'N/A'}</td>
                                             <td>{producto.nombre}</td>
                                             <td>{producto.descripcion || 'N/A'}</td>
-                                            <td>{producto.precioUnitario.toFixed(2)}</td>
+                                            <td>{producto.precioUnitarioVenta.toFixed(2)}</td>
+                                            <td>{producto.precioUnitarioProveedor.toFixed(2)}</td>
                                             <td>{producto.stock}</td>
                                             <td>{producto.categoria.nombre}</td>
                                             <td>{producto.proveedor.nombre}</td>

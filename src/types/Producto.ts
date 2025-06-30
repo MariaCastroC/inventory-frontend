@@ -6,7 +6,8 @@ export interface Producto {
   codigo?: number;
   nombre: string;
   descripcion?: string;
-  precioUnitario: number;
+  precioUnitarioVenta: number;
+  precioUnitarioProveedor: number;
   categoria: Categoria;
   proveedor: Usuario;
   stock: number;

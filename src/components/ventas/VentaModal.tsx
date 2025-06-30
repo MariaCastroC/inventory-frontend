@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Modal, Button, Form, ListGroup, Spinner, Alert, Table, InputGroup, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Form, ListGroup, Spinner, Alert, Table, Row, Col } from 'react-bootstrap';
 import { Usuario } from '../../types/Usuario';
 import usuarioService from '../../services/usuarioService';
 import { Producto } from '../../types/Producto'; // Importar tipo Producto
@@ -224,7 +224,7 @@ const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaCreada }) 
   // Calcular el total de la venta cada vez que productosEnVenta cambie
   useEffect(() => {
     const nuevoTotal = productosEnVenta.reduce((sum, item) => {
-      return sum + (item.cantidadEnVenta * item.precioUnitario);
+      return sum + (item.cantidadEnVenta * item.precioUnitarioVenta);
     }, 0);
     setTotalVenta(nuevoTotal);
   }, [productosEnVenta]);
@@ -245,7 +245,7 @@ const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaCreada }) 
     const productosDTO: ProductoVentaRequest[] = productosEnVenta.map(p => ({
       idProducto: p.idProducto!, // Aseguramos que idProducto no es undefined
       cantidad: p.cantidadEnVenta,
-      precioUnitario: p.precioUnitario, // El precio al momento de agregarla a la venta
+      precioUnitarioVenta: p.precioUnitarioVenta, // El precio al momento de agregarla a la venta
     }));
 
     const ventaData: VentaRequest = {
@@ -406,7 +406,7 @@ const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaCreada }) 
                     onClick={() => handleAddProductoAVenta(prod)}
                     disabled={prod.stock <= 0}
                   >
-                    <strong>{prod.nombre}</strong> (Código: {prod.codigo || 'N/A'}) - Precio: ${prod.precioUnitario.toFixed(2)} - Stock: {prod.stock}
+                    <strong>{prod.nombre}</strong> (Código: {prod.codigo || 'N/A'}) - Precio: ${prod.precioUnitarioVenta.toFixed(2)} - Stock: {prod.stock}
                     {prod.stock <= 0 && <span className="text-danger ms-2">(Sin stock)</span>}
                   </ListGroup.Item>
                 ))}
@@ -444,8 +444,8 @@ const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaCreada }) 
                             style={{width: '80px'}}
                           />
                         </td>
-                        <td>${item.precioUnitario.toFixed(2)}</td>
-                        <td>${(item.cantidadEnVenta * item.precioUnitario).toFixed(2)}</td>
+                        <td>${item.precioUnitarioVenta.toFixed(2)}</td>
+                        <td>${(item.cantidadEnVenta * item.precioUnitarioVenta).toFixed(2)}</td>
                         <td>
                           <Button variant="danger" size="sm" onClick={() => handleRemoveProductoDeVenta(item.idProducto)}>
                             Quitar

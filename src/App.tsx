@@ -14,6 +14,7 @@ import UsuarioIndex from './components/usuarios/UsuarioIndex';
 import ProductoIndex from './components/productos/ProductoIndex';
 import CategoriaIndex from './components/categorias/CategoriaIndex';
 import VentaIndex from './components/ventas/VentaIndex';
+import CompraIndex from './components/compras/CompraIndex';
 
 function useAxiosResponseInterceptor() {
     const navigate = useNavigate();
@@ -98,6 +99,7 @@ const AppContent: React.FC = () => {
                         <Route path="/productos" element={<ProductoIndex />} /> 
                         <Route path="/categorias" element={<CategoriaIndex />} />
                         <Route path="/ventas" element={<VentaIndex />} />
+                        <Route path="/compras" element={<CompraIndex />} />
                     </Routes>
                 </div>
             </div>

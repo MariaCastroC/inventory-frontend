@@ -1,6 +1,5 @@
-import { axiosInstance } from '../utils/axiosInterceptor'; // Ajusta la ruta si es necesario
-import { VentaRequest } from '../types/Venta'; // Ajusta la ruta si es necesario
-// Importa el tipo de respuesta de Venta si lo tienes definido, ej: import { Venta } from '../types/Venta';
+import { axiosInstance } from '../utils/axiosInterceptor'; 
+import { VentaRequest } from '../types/Venta'; 
 
 const registrarVenta = async (ventaData: VentaRequest): Promise<any> => { 
   try {

@@ -3,10 +3,11 @@ import { Producto } from '../types/Producto';
 
 export interface ProductoPayload {
   idProducto?: string;
-  codigo?: string; 
+  codigo?: number; 
   nombre: string;
   descripcion?: string;
-  precioUnitario: number;
+  precioUnitarioVenta: number;
+  precioUnitarioProveedor: number;
   stock: number;
   categoria: { idCategoria: string };
   proveedor: { idUsuario: string };
