@@ -12,10 +12,10 @@ import Swal from 'sweetalert2';
 interface VentaModalProps {
   show: boolean;
   onHide: () => void;
-  onVentaCreada?: () => void; // Callback para refrescar la lista de ventas
+  onVentaUpdated?: () => void; // Callback para refrescar la lista de ventas
 }
 
-const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaCreada }) => {
+const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaUpdated }) => {
   const [clienteNombreSearch, setClienteNombreSearch] = useState('');
   const [clienteDocumentoSearch, setClienteDocumentoSearch] = useState('');
   const [clientesSugeridos, setClientesSugeridos] = useState<Usuario[]>([]);
@@ -259,8 +259,8 @@ const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaCreada }) 
     try {
       await ventaService.registrarVenta(ventaData);
       Swal.fire('¡Venta Creada!', 'La venta ha sido registrada exitosamente.', 'success');
+      onVentaUpdated?.(); // Llamar al callback para refrescar la lista de ventas
       onHide(); // Cerrar el modal
-      onVentaCreada?.(); // Llamar al callback si existe para refrescar la lista de ventas
     } catch (error: any) {
       Swal.fire('Error', `Error al registrar la venta: ${error.response?.data?.message || error.message}`, 'error');
     } finally {
