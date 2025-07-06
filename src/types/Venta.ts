@@ -3,10 +3,8 @@ import { Producto } from "./Producto";
 import { Usuario } from "./Usuario";
 
 export interface DetalleVenta {
-  idDetalleVenta: string;
   cantidad: number;
   precioUnitario: number;
-  subtotal: number;
   producto: Producto;
 }
 
@@ -42,4 +40,21 @@ export interface VentaResponseDTO {
   nombreVendedor: string;
   metodoPago: string;
   estado: string;
+}
+
+// Representa el objeto ProductoDTO que viene dentro del detalle
+export interface ProductoDetalleDTO {
+  idProducto: string;
+  nombre: string;
+}
+
+/**
+ * Representa la estructura de un detalle de venta que se recibe del API.
+ * Coincide con la clase DetalleVentaResponseDTO de Spring Boot.
+ */
+export interface DetalleVentaDto {
+  idDetalleVenta: string;
+  cantidad: number;
+  precioUnitarioVenta: number;
+  producto: ProductoDetalleDTO;
 }

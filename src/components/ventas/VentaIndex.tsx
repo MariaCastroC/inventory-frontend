@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Table, Container, Row, Col, Form, Pagination, Spinner, Badge } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { VentaResponseDTO } from '../../types/Venta';
+import { VentaResponseDTO, DetalleVenta, DetalleVentaDto } from '../../types/Venta';
 import ventaService from '../../services/ventaService';
 import VentaModal from './VentaModal';
 
 const VentaIndex: React.FC = () => {
   const [ventas, setVentas] = useState<VentaResponseDTO[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedVenta, setSelectedVenta] = useState<VentaResponseDTO | undefined>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchNombreCliente, setSearchNombreCliente] = useState<string>('');
@@ -34,17 +33,72 @@ const VentaIndex: React.FC = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedVenta(undefined);
   };
 
   const handleShowModal = () => {
-    setSelectedVenta(undefined);
     setShowModal(true);
   };
 
-  const handleShowDetalleModal = (venta: VentaResponseDTO) => {
-    setSelectedVenta(venta);
-    alert(`Mostrando detalles para la venta...`);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
+  };
+
+  const handleShowDetalleModal = async (ventaId: string) => {
+    Swal.fire({
+      title: 'Cargando detalles...',
+      text: 'Por favor, espere.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const detalles: DetalleVentaDto[] = await ventaService.getDetalleVenta(ventaId);
+
+      if (detalles.length > 0) {
+        const detallesHtml = `
+          <div class="table-responsive">
+            <table class="table table-bordered text-start" style="margin-top: 20px;">
+              <thead class="thead-light">
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${detalles
+                  .map(
+                    (detalle) => `
+                      <tr>
+                        <td>${detalle.producto.nombre}</td>
+                        <td class="text-center">${detalle.cantidad}</td>
+                        <td class="text-end">${formatCurrency(detalle.precioUnitarioVenta)}</td>
+                        <td class="text-end">${formatCurrency(detalle.cantidad * detalle.precioUnitarioVenta)}</td>
+                      </tr>
+                    `
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        Swal.fire({
+          title: '<strong>Detalles de la Venta</strong>',
+          html: detallesHtml,
+          icon: 'info',
+          width: '800px',
+          confirmButtonText: 'Cerrar',
+        });
+      } else {
+        Swal.fire('Sin Detalles', 'No se encontraron productos para esta venta.', 'info');
+      }
+    } catch (e: any) {
+      Swal.fire('Error', `Error al obtener los detalles: ${e.response?.data?.message || e.message}`, 'error');
+    }
   };
 
   const handleAnularVenta = async (idVenta: string) => {
@@ -101,10 +155,6 @@ const VentaIndex: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -143,7 +193,7 @@ const VentaIndex: React.FC = () => {
           </Badge>
         </td>
         <td>
-          <Button variant="info" size="sm" className="me-2" onClick={() => handleShowDetalleModal(venta)}>
+          <Button variant="info" size="sm" className="me-2" onClick={() => handleShowDetalleModal(venta.idVenta)}>
             Productos
           </Button>
           <Button

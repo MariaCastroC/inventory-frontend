@@ -1,5 +1,5 @@
 import { axiosInstance } from '../utils/axiosInterceptor'; 
-import { VentaRequest } from '../types/Venta'; 
+import { DetalleVenta, DetalleVentaDto, VentaRequest } from '../types/Venta'; 
 
 /**
  * Obtiene una lista paginada de ventas desde el backend.
@@ -17,6 +17,16 @@ const getVentas = async (page: number, size: number, nombreCliente?: string) => 
   }
 
   const response = await axiosInstance.get('/ventas', { params });
+  return response.data;
+};
+
+/**
+ * Obtiene los detalles (productos) de una venta específica.
+ * @param ventaId El ID de la venta de la cual se quieren obtener los detalles.
+ * @returns Un array con los detalles de la venta.
+ */
+const getDetalleVenta = async (ventaId: string): Promise<DetalleVentaDto[]> => {
+  const response = await axiosInstance.get<DetalleVentaDto[]>(`/detalles-venta/venta/${ventaId}`);
   return response.data;
 };
 
@@ -42,6 +52,7 @@ const anularVenta = async (id: string, observacion: string): Promise<boolean> =>
 
 const ventaService = {
   getVentas,
+  getDetalleVenta,
   registrarVenta,
   anularVenta,
 };
