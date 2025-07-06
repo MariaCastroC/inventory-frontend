@@ -41,4 +41,5 @@ export interface VentaResponseDTO {
   nombreCliente: string;
   nombreVendedor: string;
   metodoPago: string;
+  estado: string;
 }

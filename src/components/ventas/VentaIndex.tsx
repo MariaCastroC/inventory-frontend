@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Container, Row, Col, Form, Pagination, Spinner } from 'react-bootstrap';
+import { Button, Table, Container, Row, Col, Form, Pagination, Spinner, Badge } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { VentaResponseDTO } from '../../types/Venta'; // Cambiado a VentaResponseDTO
+import { VentaResponseDTO } from '../../types/Venta';
 import ventaService from '../../services/ventaService';
 import VentaModal from './VentaModal';
-// import DetalleVentaModal from './DetalleVentaModal'; // Modal para ver el listado de productos
 
 const VentaIndex: React.FC = () => {
-  const [ventas, setVentas] = useState<VentaResponseDTO[]>([]); // Usamos la nueva interfaz
+  const [ventas, setVentas] = useState<VentaResponseDTO[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedVenta, setSelectedVenta] = useState<VentaResponseDTO | undefined>(); // Usamos la nueva interfaz
+  const [selectedVenta, setSelectedVenta] = useState<VentaResponseDTO | undefined>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchNombreCliente, setSearchNombreCliente] = useState<string>('');
@@ -19,7 +18,6 @@ const VentaIndex: React.FC = () => {
   const fetchVentas = useCallback(async () => {
     setIsLoading(true);
     try {
-      // El servicio ya devuelve la data con la estructura del DTO
       const data = await ventaService.getVentas(currentPage, pageSize, searchNombreCliente || undefined);
       setVentas(data.content);
       setTotalPages(data.totalPages);
@@ -40,14 +38,56 @@ const VentaIndex: React.FC = () => {
   };
 
   const handleShowModal = () => {
-    setSelectedVenta(undefined); // Solo para crear, no se edita
+    setSelectedVenta(undefined);
     setShowModal(true);
   };
 
-  const handleShowDetalleModal = (venta: VentaResponseDTO) => { // Usamos la nueva interfaz
+  const handleShowDetalleModal = (venta: VentaResponseDTO) => {
     setSelectedVenta(venta);
-    // Aquí se mostraría el modal con el listado de productos de la venta
     alert(`Mostrando detalles para la venta...`);
+  };
+
+  const handleAnularVenta = async (idVenta: string) => {
+    const { value: observacion } = await Swal.fire({
+      title: '¿Anular esta venta?',
+      text: "Esta acción no se puede revertir. Por favor, ingrese el motivo de la anulación.",
+      icon: 'warning',
+      input: 'textarea',
+      inputPlaceholder: 'Escriba aquí la observación...',
+      inputAttributes: {
+        'aria-label': 'Escriba aquí la observación'
+      },
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, anular',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Necesita escribir una observación para anular la venta!';
+        }
+      }
+    });
+
+    if (observacion) {
+      try {
+        setIsLoading(true);
+        await ventaService.anularVenta(idVenta, observacion);
+        Swal.fire(
+          '¡Anulada!',
+          'La venta ha sido anulada correctamente.',
+          'success'
+        );
+        fetchVentas(); // Actualizar la tabla para reflejar el cambio de estado
+      } catch (error: any) {
+        Swal.fire(
+          'Error',
+          `No se pudo anular la venta: ${error.response?.data?.message || error.message}`,
+          'error'
+        );
+        setIsLoading(false); // Detener el loading si hay error
+      }
+    }
   };
 
   const handlePageChange = (page: number) => {
@@ -58,7 +98,7 @@ const VentaIndex: React.FC = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchNombreCliente(event.target.value);
-    setCurrentPage(1); // Reinicia a la primera página en una nueva búsqueda
+    setCurrentPage(1);
   };
 
   const formatCurrency = (value: number) => {
@@ -74,7 +114,7 @@ const VentaIndex: React.FC = () => {
     if (isLoading) {
       return (
         <tr>
-          <td colSpan={6} className="text-center">
+          <td colSpan={7} className="text-center">
             <Spinner animation="border" variant="primary" />
             <p className="mt-2">Cargando ventas...</p>
           </td>
@@ -85,22 +125,34 @@ const VentaIndex: React.FC = () => {
     if (ventas.length === 0) {
       return (
         <tr>
-          <td colSpan={6} className="text-center">No se encontraron ventas.</td>
+          <td colSpan={7} className="text-center">No se encontraron ventas.</td>
         </tr>
       );
     }
 
     return ventas.map((venta) => (
       <tr key={venta.idVenta}>
-        {/* Accedemos a las propiedades aplanadas del DTO */}
         <td>{venta.nombreCliente}</td>
         <td>{venta.nombreVendedor}</td>
         <td>{formatDate(venta.fechaVenta)}</td>
         <td>{formatCurrency(venta.total)}</td>
         <td>{venta.metodoPago}</td>
         <td>
-          <Button variant="info" size="sm" onClick={() => handleShowDetalleModal(venta)}>
+          <Badge bg={venta.estado === 'ANULADA' ? 'danger' : 'success'}>
+            {venta.estado}
+          </Badge>
+        </td>
+        <td>
+          <Button variant="info" size="sm" className="me-2" onClick={() => handleShowDetalleModal(venta)}>
             Productos
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => handleAnularVenta(venta.idVenta)}
+            disabled={venta.estado === 'ANULADA'}
+          >
+            Anular
           </Button>
         </td>
       </tr>
@@ -141,6 +193,7 @@ const VentaIndex: React.FC = () => {
                   <th>Fecha</th>
                   <th>Total</th>
                   <th>Método Pago</th>
+                  <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -164,10 +217,6 @@ const VentaIndex: React.FC = () => {
       </div>
 
       <VentaModal show={showModal} onHide={handleCloseModal} onVentaUpdated={fetchVentas} />
-      
-      {/* {selectedVenta && (
-        <DetalleVentaModal show={showDetalleModal} onHide={() => setShowDetalleModal(false)} venta={selectedVenta} />
-      )} */}
     </Container>
   );
 };
