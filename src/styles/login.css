@@ -1,0 +1,93 @@
+/* Contenedor raíz */
+.login-page {
+  height: 100vh;
+  width: 100%;
+  background: url('https://www.clearteq.com/wp-content/uploads/2023/06/AdobeStock_559718379-scaled-e1688062022933.jpeg') no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+/* Capa oscura translúcida sobre la imagen */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Ajusta opacidad si deseas más claridad */
+  z-index: 1;
+}
+
+/* Caja blanca centrada */
+.login-page .login-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 50px 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Título */
+.login-page .login-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #333333;
+}
+
+/* Formulario */
+.login-page .login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-page .input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.login-page .input-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #555555;
+}
+
+.login-page .input-group input {
+  height: 42px;
+  padding: 0 10px;
+  font-size: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  transition: border 0.3s;
+}
+
+.login-page .input-group input:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
+.login-page .login-button {
+  margin-top: 10px;
+  height: 45px;
+  background: #667eea;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-page .login-button:hover {
+  background: #5a67d8;
+}

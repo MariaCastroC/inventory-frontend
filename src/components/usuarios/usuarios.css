@@ -1,0 +1,11 @@
+/* src/components/pages/usuarios.css */
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.btn-sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.875rem;
+}
