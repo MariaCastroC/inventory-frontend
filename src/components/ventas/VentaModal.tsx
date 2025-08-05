@@ -101,7 +101,19 @@ const VentaModal: React.FC<VentaModalProps> = ({ show, onHide, onVentaUpdated })
       setIsSearchingProductos(true);
       setProductoSearchError(null);
       try {
-        const data = await productoService.searchProductosSimple(trimmedCodigo || undefined, trimmedNombre || undefined);
+        //Valida que el código del producto ingresado solo contenga números
+        let codigoProducto: number | undefined = undefined;
+        if (trimmedCodigo !== '') {
+          if (/^\d+$/.test(trimmedCodigo)) {
+            codigoProducto = parseInt(trimmedCodigo, 10);
+          } else {
+            setProductoSearchError('El código del producto debe ser numérico.');
+            setProductosSugeridos([]);
+            setIsSearchingProductos(false);
+            return;
+          }
+        }
+        const data = await productoService.searchProductosSimple(codigoProducto, trimmedNombre || undefined);
         // Ya no filtramos aquí, el filtrado visual se hará en el renderizado
         setProductosSugeridos(data); 
       } catch (error) {

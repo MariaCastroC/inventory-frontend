@@ -64,7 +64,7 @@ const deleteProducto = async (id: string): Promise<void> => {
   }
 };
 
-const searchProductosSimple = async (codigo?: string, nombre?: string): Promise<Producto[]> => {
+const searchProductosSimple = async (codigo?: number, nombre?: string): Promise<Producto[]> => {
   try {
     const params: any = {};
     if (codigo) {
@@ -81,7 +81,7 @@ const searchProductosSimple = async (codigo?: string, nombre?: string): Promise<
   }
 };
 
-const searchProductosByProveedor = async (idProveedor: string, codigo?: string, nombre?: string): Promise<Producto[]> => {
+const searchProductosByProveedor = async (idProveedor: string, codigo?: number, nombre?: string): Promise<Producto[]> => {
 
   try {
 

@@ -176,7 +176,7 @@ const ProductoIndex: React.FC = () => {
                                         </tr>
                                     ))}
                                     {productos.length === 0 && !isLoading && (
-                                        <tr><td colSpan={8} className="text-center">No se encontraron productos.</td></tr>
+                                        <tr><td colSpan={9} className="text-center">No se encontraron productos.</td></tr>
                                     )}
                                 </tbody>
                             </Table>

@@ -96,16 +96,17 @@ const Home: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {productos.map((product) => (
-                                        <tr key={product.idProducto}>
-                                            <td>{product.idProducto}</td>
-                                            <td>{product.nombre}</td>
-                                            <td>{(product.stock)}</td>
-                                        </tr>
-                                    ))}
-                                    {productos.length === 0 && !isLoading && (
-                                        <tr><td colSpan={3} className="text-center">No se encontraron productos.</td></tr>
-                                    )}
+                                    {productos.length > 0
+                                        ? productos.map((product) => (
+                                            <tr key={product.idProducto}>
+                                                <td>{product.idProducto}</td>
+                                                <td>{product.nombre}</td>
+                                                <td>{(product.stock)}</td>
+                                            </tr>
+                                        )) :
+                                        productos.length === 0 && !isLoading && (
+                                            <tr><td colSpan={3} className="text-center">No se encontraron productos.</td></tr>
+                                        )}
                                 </tbody>
                             </table>
                         </div>
