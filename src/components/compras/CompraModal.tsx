@@ -226,10 +226,7 @@ const CompraModal: React.FC<CompraModalProps> = ({ show, onHide, onCompraUpdated
       Swal.fire('Aviso', 'El producto ya está en la lista. Puede modificar la cantidad.', 'info');
       return;
     }
-    if (producto.stock <= 0) {
-      Swal.fire('Sin Stock', 'Este producto no tiene stock disponible.', 'warning');
-      return;
-    }
+    
     setProductosAComprar(prev => [...prev, { ...producto, cantidadEnCompra: 1 }]);
     setProductoCodigoSearch('');
     setProductoNombreSearch('');
@@ -245,8 +242,7 @@ const CompraModal: React.FC<CompraModalProps> = ({ show, onHide, onCompraUpdated
     if (!idProducto) return;
     setProductosAComprar(prev => prev.map(p => {
       if (p.idProducto === idProducto) {
-        const cantidad = Math.max(1, Math.min(nuevaCantidad, p.stock));
-        return { ...p, cantidadEnCompra: cantidad };
+        return { ...p, cantidadEnCompra: nuevaCantidad };
       }
       return p;
     }));
@@ -436,10 +432,9 @@ const CompraModal: React.FC<CompraModalProps> = ({ show, onHide, onCompraUpdated
                     action
                     key={prod.idProducto}
                     onClick={() => handleAddProductoACompra(prod)}
-                    disabled={prod.stock <= 0}
                   >
                     <strong>{prod.nombre}</strong> (Código: {prod.codigo || 'N/A'}) - Precio Proveedor: ${prod.precioUnitarioProveedor.toFixed(2)} - Stock: {prod.stock}
-                    {prod.stock <= 0 && <span className="text-danger ms-2">(Sin stock)</span>}
+
                   </ListGroup.Item>
                 ))}
               </ListGroup>
