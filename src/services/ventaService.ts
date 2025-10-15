@@ -1,5 +1,8 @@
 import { axiosInstance } from '../utils/axiosInterceptor'; 
-import { DetalleVenta, DetalleVentaDto, VentaRequest } from '../types/Venta'; 
+import { DetalleVentaDto, VentaRequest } from '../types/Venta'; 
+import { getCurrentDateFormatted } from '../utils/getCurrentDateFormatted';
+import { downloadPDF } from '../utils/downloadPDF';
+
 
 /**
  * Obtiene una lista paginada de ventas desde el backend.
@@ -50,11 +53,39 @@ const anularVenta = async (id: string, observacion: string): Promise<boolean> =>
   }
 };
 
+const generarFacturaVenta = async (id: string, customerName: string): Promise<string> => {
+  try {
+
+    const response = await axiosInstance.get(`/ventas/${id}/factura`, {
+      responseType: "blob"
+    });
+    const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+
+    const idVenta = id.split('-');
+    const nombreClienteCleaned = customerName
+      .normalize("NFD")                // separa las letras de los acentos
+      .replace(/[\u0300-\u036f]/g, "") // elimina los diacríticos
+      .replace(/[^\p{L}]+/gu, ""); // elimina todo lo que no sea letras
+
+    const fechaActual = getCurrentDateFormatted();
+    const nombrePDFFactura = `FV_${nombreClienteCleaned}_${fechaActual}_${idVenta[idVenta.length - 1]}.pdf`;
+
+    downloadPDF(url, nombrePDFFactura);
+
+    return url;
+
+  } catch (error) {
+    console.error(`Error al generar la factura de venta con ID ${id}`, error);
+    throw error;
+  }
+}
+
 const ventaService = {
   getVentas,
   getDetalleVenta,
   registrarVenta,
   anularVenta,
+  generarFacturaVenta
 };
 
 export default ventaService;

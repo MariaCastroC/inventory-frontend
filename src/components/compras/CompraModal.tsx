@@ -240,6 +240,7 @@ const CompraModal: React.FC<CompraModalProps> = ({ show, onHide, onCompraUpdated
 
   const handleCantidadProductoChange = (idProducto: string | undefined, nuevaCantidad: number) => {
     if (!idProducto) return;
+    nuevaCantidad = nuevaCantidad.toString().includes('-') ? -nuevaCantidad : nuevaCantidad;
     setProductosAComprar(prev => prev.map(p => {
       if (p.idProducto === idProducto) {
         return { ...p, cantidadEnCompra: nuevaCantidad };
@@ -466,7 +467,6 @@ const CompraModal: React.FC<CompraModalProps> = ({ show, onHide, onCompraUpdated
                             value={item.cantidadEnCompra}
                             onChange={(e) => handleCantidadProductoChange(item.idProducto, parseInt(e.target.value))}
                             min="1"
-                            max={item.stock}
                             size="sm"
                             style={{ width: '80px' }}
                           />

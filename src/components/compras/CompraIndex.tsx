@@ -70,8 +70,8 @@ const CompraIndex: React.FC = () => {
               </thead>
               <tbody>
                 ${detalles
-                  .map(
-                    (detalle) => `
+            .map(
+              (detalle) => `
                       <tr>
                         <td>${detalle.producto.nombre}</td>
                         <td class="text-center">${detalle.cantidad}</td>
@@ -79,8 +79,8 @@ const CompraIndex: React.FC = () => {
                         <td class="text-end">${formatCurrency(detalle.cantidad * detalle.precioUnitarioProveedor)}</td>
                       </tr>
                     `
-                  )
-                  .join('')}
+            )
+            .join('')}
               </tbody>
             </table>
           </div>
@@ -155,6 +155,31 @@ const CompraIndex: React.FC = () => {
     setCurrentPage(1);
   };
 
+  const handleGeneratePurchaseInvoice = async (id: string, nombreCliente: string) => {
+    Swal.fire({
+      title: 'Generando factura...',
+      text: 'Por favor, espere.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const resp = await compraService.generarFacturaCompra(id, nombreCliente);
+
+      if (resp) {
+        Swal.fire('Factura Compra', 'La factura de compra ha sido generada exitosamente!', 'success');
+      } else {
+        Swal.fire('Sin Detalles', 'No se pudo generar la factura para esta compra.', 'info');
+      }
+    } catch (e: any) {
+      Swal.fire('Error', `Error al generar la factura: ${e.response?.data?.message || e.message}`, 'error');
+    }
+
+
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -182,7 +207,7 @@ const CompraIndex: React.FC = () => {
 
     return compras.map((compra) => (
       <tr key={compra.idCompra}>
-        <td>{compra.idCompra}</td>
+        <td>{compra.idCompra.split('-').pop()}</td>
         <td>{compra.nombreCliente}</td>
         <td>{compra.nombreProveedor}</td>
         <td>{formatDate(compra.fechaCompra)}</td>
@@ -202,8 +227,16 @@ const CompraIndex: React.FC = () => {
             size="sm"
             onClick={() => handleAnularCompra(compra.idCompra)}
             disabled={compra.estado === 'ANULADA'}
+            className='me-2'
           >
             Anular
+          </Button>
+          <Button
+            variant="warning"
+            size="sm"
+            onClick={() => handleGeneratePurchaseInvoice(compra.idCompra, compra.nombreProveedor)}
+          >
+            Generar Factura
           </Button>
         </td>
       </tr>

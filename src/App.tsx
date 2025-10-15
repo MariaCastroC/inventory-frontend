@@ -15,6 +15,7 @@ import ProductoIndex from './components/productos/ProductoIndex';
 import CategoriaIndex from './components/categorias/CategoriaIndex';
 import VentaIndex from './components/ventas/VentaIndex';
 import CompraIndex from './components/compras/CompraIndex';
+import useUserRole from './hooks/useUserRole';
 
 function useAxiosResponseInterceptor() {
     const navigate = useNavigate();
@@ -80,26 +81,57 @@ const AppContent: React.FC = () => {
     const location = useLocation();
     const { isLoggedIn } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { userRole, isLoadingRole } = useUserRole();
     useAxiosResponseInterceptor();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    if (isLoadingRole) {
+        return <div>Cargando...</div>;
+    }
+
     return (
         <>
             {isLoggedIn && location.pathname !== '/login' && <Navbar toggleSidebar={toggleSidebar} />}
             <div className='main-container'>
                 {isLoggedIn && location.pathname !== '/login' && <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+
                 <div className='content-container'>
                     <Routes>
+                        {
+                            userRole === 'ADMIN' &&
+                            <>
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/usuarios" element={<UsuarioIndex />} />
+                                <Route path="/productos" element={<ProductoIndex />} />
+                                <Route path="/categorias" element={<CategoriaIndex />} />
+                                <Route path="/ventas" element={<VentaIndex />} />
+                                <Route path="/compras" element={<CompraIndex />} />
+                            </>
+                        }
+                        {
+                            userRole === 'VENTAS' &&
+                            <>
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/ventas" element={<VentaIndex />} />
+                                <Route path="/categorias" element={<CategoriaIndex />} />
+                                <Route path="/productos" element={<ProductoIndex />} />
+                            </>
+                        }
+
+                        {
+                            userRole === 'COMPRAS' &&
+                            <>
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/compras" element={<CompraIndex />} />
+                                <Route path="/productos" element={<ProductoIndex />} />
+                            </>
+                        }
+
                         <Route path="/logout" element={<Logout />} />
-                        <Route path="/home" element={<Home />} />
-                        <Route path="/usuarios" element={<UsuarioIndex />} />
-                        <Route path="/productos" element={<ProductoIndex />} /> 
-                        <Route path="/categorias" element={<CategoriaIndex />} />
-                        <Route path="/ventas" element={<VentaIndex />} />
-                        <Route path="/compras" element={<CompraIndex />} />
+                        <Route path="*" element={<Navigate to="/home" />} />
                     </Routes>
                 </div>
             </div>

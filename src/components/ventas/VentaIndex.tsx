@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Table, Container, Row, Col, Form, Pagination, Spinner, Badge } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { VentaResponseDTO, DetalleVenta, DetalleVentaDto } from '../../types/Venta';
+import { VentaResponseDTO, DetalleVentaDto } from '../../types/Venta';
 import ventaService from '../../services/ventaService';
 import VentaModal from './VentaModal';
 
@@ -70,8 +70,8 @@ const VentaIndex: React.FC = () => {
               </thead>
               <tbody>
                 ${detalles
-                  .map(
-                    (detalle) => `
+            .map(
+              (detalle) => `
                       <tr>
                         <td>${detalle.producto.nombre}</td>
                         <td class="text-center">${detalle.cantidad}</td>
@@ -79,8 +79,8 @@ const VentaIndex: React.FC = () => {
                         <td class="text-end">${formatCurrency(detalle.cantidad * detalle.precioUnitarioVenta)}</td>
                       </tr>
                     `
-                  )
-                  .join('')}
+            )
+            .join('')}
               </tbody>
             </table>
           </div>
@@ -155,6 +155,31 @@ const VentaIndex: React.FC = () => {
     setCurrentPage(1);
   };
 
+  const handleGenerateSaleInvoice = async (id: string, nombreCliente: string) => {
+    Swal.fire({
+      title: 'Generando factura...',
+      text: 'Por favor, espere.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const resp = await ventaService.generarFacturaVenta(id, nombreCliente);
+
+      if (resp) {
+        Swal.fire('Factura Venta', 'La factura de venta ha sido generada exitosamente!', 'success');
+      } else {
+        Swal.fire('Sin Detalles', 'No se pudo generar la factura para esta venta.', 'info');
+      }
+    } catch (e: any) {
+      Swal.fire('Error', `Error al generar la factura: ${e.response?.data?.message || e.message}`, 'error');
+    }
+
+
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -164,7 +189,7 @@ const VentaIndex: React.FC = () => {
     if (isLoading) {
       return (
         <tr>
-          <td colSpan={7} className="text-center">
+          <td colSpan={8} className="text-center">
             <Spinner animation="border" variant="primary" />
             <p className="mt-2">Cargando ventas...</p>
           </td>
@@ -175,13 +200,14 @@ const VentaIndex: React.FC = () => {
     if (ventas.length === 0) {
       return (
         <tr>
-          <td colSpan={7} className="text-center">No se encontraron ventas.</td>
+          <td colSpan={8} className="text-center">No se encontraron ventas.</td>
         </tr>
       );
     }
 
     return ventas.map((venta) => (
       <tr key={venta.idVenta}>
+        <td>{venta.idVenta.split('-').pop()}</td>
         <td>{venta.nombreCliente}</td>
         <td>{venta.nombreVendedor}</td>
         <td>{formatDate(venta.fechaVenta)}</td>
@@ -201,8 +227,16 @@ const VentaIndex: React.FC = () => {
             size="sm"
             onClick={() => handleAnularVenta(venta.idVenta)}
             disabled={venta.estado === 'ANULADA'}
+            className="me-2"
           >
             Anular
+          </Button>
+          <Button
+            variant="warning"
+            size="sm"
+            onClick={() => handleGenerateSaleInvoice(venta.idVenta, venta.nombreCliente)}
+          >
+            Generar Factura
           </Button>
         </td>
       </tr>
@@ -238,6 +272,7 @@ const VentaIndex: React.FC = () => {
             <Table striped bordered hover id="dataTableVentas" width="100%">
               <thead>
                 <tr>
+                  <th>ID Venta</th>
                   <th>Cliente</th>
                   <th>Vendedor</th>
                   <th>Fecha</th>

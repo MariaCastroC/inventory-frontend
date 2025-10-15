@@ -1,5 +1,7 @@
 import { axiosInstance } from '../utils/axiosInterceptor'; 
 import { CompraRequest, DetalleCompraDto } from '../types/Compra';
+import { getCurrentDateFormatted } from '../utils/getCurrentDateFormatted';
+import { downloadPDF } from '../utils/downloadPDF';
 
 /**
  * Obtiene una lista paginada de compras desde el backend.
@@ -50,11 +52,42 @@ const anularCompra = async (id: string, observacion: string): Promise<boolean> =
   }
 };
 
+const generarFacturaCompra = async (id: string, supplierName: string): Promise<string> => {
+  try {
+
+    const response = await axiosInstance.get(`/compras/${id}/factura`, {
+      responseType: "blob"
+    });
+    const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+
+    const idCompra = id.split('-');
+    
+    const nombreSupplierCleaned = supplierName
+      .normalize("NFD")                // separa las letras de los acentos
+      .replace(/[\u0300-\u036f]/g, "") // elimina los diacríticos
+      .replace(/[^\p{L}]+/gu, ""); // elimina todo lo que no sea letras
+
+    const fechaActual = getCurrentDateFormatted();
+    const nombrePDFFactura = `FC_${nombreSupplierCleaned}_${fechaActual}_${idCompra[idCompra.length - 1]}.pdf`;
+    
+    // window.open(url, "_blank"); // abrir pdf en otra pestaña del navegador
+    
+    downloadPDF(url, nombrePDFFactura); // descargar pdf a carpeta Descargas del equipo
+
+    return url;
+
+  } catch (error) {
+    console.error(`Error al generar la factura de compra con ID ${id}`, error);
+    throw error;
+  }
+}
+
 const compraService = {
   getCompras,
   getDetalleCompra,
   registrarCompra,
   anularCompra,
+  generarFacturaCompra
 };
 
 export default compraService;
